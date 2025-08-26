@@ -216,7 +216,7 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 📞 Support
 
-- **Issues** : [GitHub Issues](https://github.com/votre-repo/issues)
+- **Issues** : [GitHub Issues](https://github.com/Alvine-Mays/whispr.git)
 - **Documentation** : Ce README + commentaires dans le code
 - **Email** : votre-email@domain.com
 
@@ -229,6 +229,6 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ---
 
-**Fait avec ❤️ par [Votre Nom]**
+**Fait avec ❤️ par Alvine Mays**
 
 > Whispr - Parce que parfois, l'anonymat libère la parole
