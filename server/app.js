@@ -22,14 +22,14 @@ app.use(cors({
 }));
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite à 100 requêtes par fenêtre
-  message: {
-    error: 'Trop de requêtes, réessayez plus tard'
-  }
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // Limite à 100 requêtes par fenêtre
+//   message: {
+//     error: 'Trop de requêtes, réessayez plus tard'
+//   }
+// });
+// app.use(limiter);
 
 // Rate limiting spécifique pour l'envoi de messages
 const messageLimiter = rateLimit({
@@ -91,4 +91,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
   console.log(`🌐 Environnement: ${process.env.NODE_ENV || 'development'}`);
+
 });
