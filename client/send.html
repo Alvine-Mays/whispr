@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envoyer un message - Whispr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C63FF',
+                        secondary: '#FF6B9D',
+                        dark: '#222222'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-primary via-purple-600 to-secondary min-h-screen">
+
+    <!-- Header -->
+    <nav class="p-4 md:p-6">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <a href="index.html" class="flex items-center space-x-2 text-white hover:text-white/80 transition-colors">
+                    <i class="fas fa-comment-dots text-2xl"></i>
+                    <h1 class="font-bold text-xl">Whispr</h1>
+                </a>
+            </div>
+            <a href="index.html" class="text-white/80 hover:text-white transition-colors">
+                <i class="fas fa-home text-xl"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-4 py-8">
+        <div class="max-w-lg w-full">
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center">
+                <div class="bg-white/10 backdrop-blur-sm rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-spinner fa-spin text-white text-2xl"></i>
+                </div>
+                <p class="text-white/80">Vérification du destinataire...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden text-center">
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
+                    <div class="bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-gray-800 font-semibold text-xl mb-2">Utilisateur introuvable</h3>
+                    <p class="text-gray-600 mb-4" id="errorMessage">Ce lien n'existe pas ou a expiré.</p>
+                    <a href="index.html" class="inline-block bg-primary text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors">
+                        <i class="fas fa-home mr-2"></i>
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+
+            <!-- Send Form -->
+            <div id="sendForm" class="hidden">
+                
+                <!-- Header Card -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl mb-6">
+                    <div class="text-center">
+                        <div class="bg-gradient-to-r from-primary to-purple-600 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-user-secret text-white text-2xl"></i>
+                        </div>
+                        <h2 class="text-gray-800 font-bold text-xl mb-2">
+                            Envoyer un message à 
+                            <span class="text-primary" id="recipientName">@utilisateur</span>
+                        </h2>
+                        <p class="text-gray-600 text-sm">
+                            Votre message sera complètement anonyme
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Message Form -->
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
+                    <form id="messageForm" class="space-y-4">
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-comment mr-2"></i>
+                                Votre message anonyme
+                            </label>
+                            <textarea 
+                                id="messageContent"
+                                placeholder="Écrivez votre message anonyme ici..."
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
+                                rows="6"
+                                maxlength="500"
+                                required
+                            ></textarea>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>Minimum 1 caractère</span>
+                                <span id="charCount">0/500 caractères</span>
+                            </div>
+                        </div>
+
+                        <div id="formErrorMessage" class="hidden bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded-xl text-sm">
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-primary text-white py-3 px-6 rounded-xl font-medium hover:bg-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                            id="sendButton"
+                        >
+                            <span class="button-text">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Envoyer anonymement
+                            </span>
+                            <span class="button-loading hidden">
+                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                                Envoi en cours...
+                            </span>
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="text-gray-500 text-xs">
+                                <i class="fas fa-shield-alt mr-1"></i>
+                                Votre identité restera complètement anonyme
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Privacy Notice -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mt-4 text-center">
+                    <p class="text-white/80 text-xs">
+                        <i class="fas fa-clock mr-1"></i>
+                        Les messages sont automatiquement supprimés après 48h
+                    </p>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" class="hidden">
+                <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl text-center">
+                    <div class="bg-green-100 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                        <i class="fas fa-check text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-gray-800 font-bold text-2xl mb-3">
+                        Message envoyé !
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Votre message anonyme a été transmis avec succès
+                    </p>
+                    
+                    <div class="space-y-3">
+                        <button 
+                            onclick="sendAnother()" 
+                            class="w-full bg-primary text-white py-3 px-6 rounded-xl font-medium hover:bg-purple-700 transition-all duration-200"
+                        >
+                            <i class="fas fa-plus mr-2"></i>
+                            Envoyer un autre message
+                        </button>
+                        
+                        <a 
+                            href="index.html" 
+                            class="block w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors text-center"
+                        >
+                            <i class="fas fa-home mr-2"></i>
+                            Créer mon propre lien
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Confetti Animation -->
+    <canvas id="confetti" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <script src="js/send.js"></script>
+</body>
+</html>

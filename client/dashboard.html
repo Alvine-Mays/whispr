@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Whispr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C63FF',
+                        secondary: '#FF6B9D',
+                        dark: '#222222'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-comment-dots text-primary text-xl"></i>
+                        <span class="font-bold text-gray-800">Whispr</span>
+                    </a>
+                    <span class="text-gray-400">•</span>
+                    <span class="text-gray-600 font-medium" id="usernameDisplay">Dashboard</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="copyDashboardLink()" class="bg-primary text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-700 transition-colors">
+                        <i class="fas fa-share-alt mr-1"></i>
+                        Partager
+                    </button>
+                    <a href="index.html" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-home text-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6">
+        
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-primary text-3xl mb-4"></i>
+            <p class="text-gray-600">Chargement de vos messages...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="hidden text-center py-12">
+            <div class="bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-gray-800 font-semibold text-xl mb-2">Erreur de chargement</h3>
+            <p class="text-gray-600 mb-4" id="errorMessage">Une erreur est survenue lors du chargement.</p>
+            <button onclick="loadMessages()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                <i class="fas fa-redo mr-2"></i>
+                Réessayer
+            </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div id="statsSection" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-primary/10 rounded-full p-3 mr-4">
+                        <i class="fas fa-envelope text-primary"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Messages reçus</p>
+                        <p class="text-2xl font-bold text-gray-800" id="totalMessages">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-green-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-eye text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Messages lus</p>
+                        <p class="text-2xl font-bold text-gray-800" id="readMessages">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="bg-orange-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-bell text-orange-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Non lus</p>
+                        <p class="text-2xl font-bold text-gray-800" id="unreadMessages">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Link Card -->
+        <div id="shareLinkSection" class="hidden bg-gradient-to-r from-primary to-purple-600 rounded-xl p-6 mb-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-semibold text-lg mb-1">Votre lien anonyme</h3>
+                    <p class="text-white/80 text-sm">Partagez ce lien pour recevoir plus de messages</p>
+                </div>
+                <button onclick="copyDashboardLink()" class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-colors">
+                    <i class="fas fa-copy mr-2"></i>
+                    Copier
+                </button>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 mt-4">
+                <p class="text-sm font-mono" id="shareLink"><!-- Le lien sera inséré ici --></p>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="messagesSection" class="hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Vos messages</h2>
+                <button onclick="loadMessages()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <div class="bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-inbox text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-gray-800 font-semibold text-xl mb-2">Aucun message pour le moment</h3>
+                <p class="text-gray-600 mb-4">Partagez votre lien pour commencer à recevoir des messages anonymes !</p>
+                <button onclick="copyDashboardLink()" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-share-alt mr-2"></i>
+                    Partager mon lien
+                </button>
+            </div>
+
+            <!-- Messages List -->
+            <div id="messagesList" class="space-y-4">
+                <!-- Les messages seront insérés ici dynamiquement -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 transform transition-all duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Message anonyme</h3>
+                <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                <p class="text-gray-800 leading-relaxed" id="modalMessageContent">
+                    <!-- Contenu du message -->
+                </p>
+            </div>
+            
+            <div class="text-sm text-gray-500 mb-4" id="modalMessageDate">
+                <!-- Date du message -->
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="closeMessageModal()" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                    Fermer
+                </button>
+                <button onclick="shareMessage()" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-share mr-2"></i>
+                    Partager
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage">Lien copié !</span>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
